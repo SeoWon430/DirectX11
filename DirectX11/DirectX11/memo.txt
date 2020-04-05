@@ -1,0 +1,25 @@
+
+DirectX11 참고  http://www.rastertek.com/tutdx11s2.html
+
+
+						CameraClass		ColorShaderClass	GraphicsClass	InputClass		ModelClass		SystemClass		Color.ps/vs		TextureClass	TextureShaderClass		비고
+02 : FrameWork
+03 : DirectX11 Init
+04 : Shader(HLSL)		추가★			추가★				추가★			추가★			추가★			추가★			추가★
+05 : Texture			유지●			제거☆				변경◎			유지●			변경◎			유지●			제거☆			추가★			추가★					Color관련 클래스를 Texture관련 클래스로 대체
+06 : Light
+07 : 3D File Render
+09 : Ambient Light
+10 : Specular Light
+11 : 2D Render
+12 : Font
+13 : Direct Input
+14 : Direct Sound
+15 : FPS, CPU, Timer
+
+
+20.04.01 : 02~04
+20.04.05 : 05
+
+
+

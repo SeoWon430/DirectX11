@@ -1,0 +1,38 @@
+
+
+/* ★ 픽셀 셰이더(Pixel Shader)
+	2D상으로 변환된 화면 픽셀의 최종 색상을 계산
+*/
+
+
+
+// 입힐 텍스쳐 이미지
+Texture2D shaderTexture;
+// 샘플링
+SamplerState SampleType;
+
+
+/* ★ 샘플링(Sample)
+    - 텍스쳐 이미지를 오브젝트에 입혀 디스플레이의 픽셀로 렌더링 할 때, 
+        이미지의 픽셀과 디스플레이의 픽셀은 1:1로 매칭 되지 않는 경우가 많음
+        텍스쳐의 이미지 원본 크기보다 작게 오브젝트에 입힐 경우 선택적으로 픽셀을 가져와 입혀야 함
+        이러한 선택적으로 픽셀을 가져 오는 작업을 샘플링이라 함
+*/
+
+
+struct PixelInputType {
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+};
+
+
+
+float4 TexturePixelShader(PixelInputType input) : SV_TARGET {
+
+	float4 textureColor;
+
+    // 텍스쳐의 색상을 샘플링하여 색상을 구성
+    textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+    return textureColor;
+}

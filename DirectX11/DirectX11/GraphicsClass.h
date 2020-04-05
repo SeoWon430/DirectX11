@@ -2,6 +2,11 @@
 
 #include "stdafx.h"
 
+#include "D3DClass.h"
+#include "CameraClass.h"
+#include "ModelClass.h"
+#include "ColorShaderClass.h"
+#include "TextureShaderClass.h"
 
 
 // 전체 화면
@@ -53,4 +58,16 @@ public:
 
 private:
 	bool Render();
+
+private:
+	D3DClass* m_Direct3D = nullptr;
+	CameraClass* m_Camera = nullptr;
+	ModelClass* m_Model = nullptr;
+
+	//색상 셰이더(Color.vs와 Color.ps)를 사용
+	//ColorShaderClass* m_ColorShader = nullptr;
+
+	//텍스쳐 셰이더(Texture.vs와 Texture.ps)를 사용
+	TextureShaderClass* m_TextureShader = nullptr;
+	
 };
