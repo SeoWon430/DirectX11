@@ -3,15 +3,39 @@
 #include "stdafx.h"
 #include "TextureClass.h"
 
+#include <fstream>
+using namespace std;
 
 // 3D오브젝트를 받아와 생성
 class ModelClass {
 
 private:
 	struct VertexType {
+
+		// 각 점의 위치
 		XMFLOAT3 position;
+
+		// 각 점의 색상과 불투명도
 		//XMFLOAT4 color;
+
+		// 각 점의 텍스쳐 좌표
 		XMFLOAT2 texture;
+
+		// 각 점의 방향(노말벡터)
+		XMFLOAT3 normal;
+	};
+
+
+	struct ModelType {
+
+		// 위치
+		float x, y, z;
+
+		// 텍스쳐좌표
+		float tu, tv;
+
+		// 노멀
+		float nx, ny, nz;
 	};
 
 public:
@@ -19,7 +43,12 @@ public:
 	ModelClass(const ModelClass&);
 	~ModelClass();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*);
+	// 06. Texture까지
+	//bool Initialize(ID3D11Device*, char*);
+
+	// 07. 3D Model
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext* deviceContext, char*, char*);
+
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
@@ -31,8 +60,13 @@ private:
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 
-	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+	// 06. Texture
+	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext* deviceContext, char*);
 	void ReleaseTexture();
+
+	// 07. 3D Model
+	bool LoadModel(char*);
+	void ReleaseModel();
 
 private:
 
@@ -62,4 +96,6 @@ private:
 
 
 	TextureClass* m_Texture = nullptr;
+
+	ModelType* m_model = nullptr;
 };

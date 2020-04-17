@@ -25,6 +25,9 @@ public:
 
 	void GetVideoCardInfo(char*, int&);
 
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+
 private:
 
 	// 수직 동기화
@@ -63,4 +66,7 @@ private:
 
 	// 직교 행렬
 	XMMATRIX m_orthoMatrix;
+
+	// 깊이 스텐실
+	ID3D11DepthStencilState* m_depthDisabledStencilState = nullptr;
 };

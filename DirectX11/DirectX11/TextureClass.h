@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "DDSTextureLoader.h"
 
 
 // 텍스쳐(이미지) 정보를 가질 클래스
@@ -21,6 +22,7 @@ public:
 	TextureClass(const TextureClass&);
 	~TextureClass();
 
+	bool Initialize(ID3D11Device*, WCHAR*);
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*);
 	void Shutdown();
 

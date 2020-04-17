@@ -5,9 +5,13 @@
 #include "D3DClass.h"
 #include "CameraClass.h"
 #include "ModelClass.h"
-#include "ColorShaderClass.h"
+#include "BitmapClass.h"
+
+//#include "ColorShaderClass.h"
 #include "TextureShaderClass.h"
 
+#include "Lightshaderclass.h"
+#include "Lightclass.h"
 
 // 전체 화면
 const bool FULL_SCREEN = false;
@@ -57,17 +61,26 @@ public:
 	bool Frame();
 
 private:
-	bool Render();
+	//bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* m_Direct3D = nullptr;
 	CameraClass* m_Camera = nullptr;
 	ModelClass* m_Model = nullptr;
 
-	//색상 셰이더(Color.vs와 Color.ps)를 사용
+	// 색상 셰이더(Color.vs와 Color.ps)를 사용
 	//ColorShaderClass* m_ColorShader = nullptr;
 
-	//텍스쳐 셰이더(Texture.vs와 Texture.ps)를 사용
-	TextureShaderClass* m_TextureShader = nullptr;
+	// 텍스쳐 셰이더(Texture.vs와 Texture.ps)를 사용
+	//TextureShaderClass* m_TextureShader = nullptr;
 	
+	// 조명 셰이더(Light.vs와 Light.ps)를 사용
+	LightShaderClass* m_LightShader;
+	LightClass* m_Light;
+
+	// 2D이미지
+	BitmapClass* m_Bitmap;
+	// 2D에 적용할 텍스쳐 셰이더
+	TextureShaderClass* m_TextureShader = nullptr;
 };

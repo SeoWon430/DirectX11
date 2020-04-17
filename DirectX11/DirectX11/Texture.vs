@@ -9,8 +9,7 @@
 
 
 
-cbuffer MatrixBuffer
-{
+cbuffer MatrixBuffer {
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
@@ -20,8 +19,7 @@ cbuffer MatrixBuffer
 //////////////
 // TYPEDEFS //
 //////////////
-struct VertexInputType
-{
+struct VertexInputType {
     float4 position : POSITION;
     float2 tex : TEXCOORD0;
 };
@@ -36,8 +34,7 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType TextureVertexShader(VertexInputType input)
-{
+PixelInputType TextureVertexShader(VertexInputType input) {
     PixelInputType output;
     
 
