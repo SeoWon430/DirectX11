@@ -6,6 +6,7 @@
 #include "CameraClass.h"
 #include "ModelClass.h"
 #include "BitmapClass.h"
+#include "TextClass.h"
 
 //#include "ColorShaderClass.h"
 #include "TextureShaderClass.h"
@@ -59,15 +60,17 @@ public:
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Frame();
+	bool Frame(int, int);
+	bool Frame(int, int, int, int, float);
 
 private:
 	//bool Render();
 	bool Render(float);
 
 private:
-	D3DClass* m_Direct3D = nullptr;
-	CameraClass* m_Camera = nullptr;
-	ModelClass* m_Model = nullptr;
+	D3DClass* m_Direct3D;
+	CameraClass* m_Camera;
+	ModelClass* m_Model;
 
 	// 색상 셰이더(Color.vs와 Color.ps)를 사용
 	//ColorShaderClass* m_ColorShader = nullptr;
@@ -82,5 +85,9 @@ private:
 	// 2D이미지
 	BitmapClass* m_Bitmap;
 	// 2D에 적용할 텍스쳐 셰이더
-	TextureShaderClass* m_TextureShader = nullptr;
+	TextureShaderClass* m_TextureShader;
+
+
+	// 텍스트
+	TextClass* m_Text;
 };

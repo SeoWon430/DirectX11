@@ -3,6 +3,16 @@
 
 
 LightShaderClass::LightShaderClass() {
+
+	m_vertexShader = nullptr;
+	m_pixelShader = nullptr;
+
+	m_layout = nullptr;
+	m_sampleState = nullptr;
+
+	m_matrixBuffer = nullptr;
+	m_lightBuffer = nullptr;
+	m_cameraBuffer = nullptr;
 }
 
 
@@ -16,7 +26,7 @@ LightShaderClass::~LightShaderClass() {
 
 
 
-// 조명셰이더 클래스 초기화
+// 초기화
 bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd) {
 
 	WCHAR vs[] = L"../DirectX11/Light.vs";

@@ -4,6 +4,16 @@
 
 
 GraphicsClass::GraphicsClass() {
+	m_Direct3D = nullptr;
+	m_Camera = nullptr;
+	m_Model = nullptr;
+
+	m_LightShader = nullptr;
+	m_Light = nullptr;
+
+	m_Bitmap = nullptr;
+	m_TextureShader = nullptr;
+	m_Text = nullptr;
 
 }
 
@@ -21,7 +31,7 @@ GraphicsClass::~GraphicsClass() {
 
 
 
-// 그래픽 클래스 초기화
+// 초기화
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd) {
 
 	// Direct3D 객체 생성
@@ -45,6 +55,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd) {
 	}
 	// 카메라 포지션 설정
 	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
+	XMMATRIX baseViewMatrix;
+	m_Camera->Render();
+	m_Camera->GetViewMatrix(baseViewMatrix);
+
 
 
 
@@ -149,6 +163,38 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd) {
 	}
 
 
+
+	/*
+
+	m_Text = new TextClass;
+	if (!m_Text) {
+		return false;
+	}
+
+	char fontFile[] = "";
+	char text[] = "Hello";
+	if (!m_Text->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), fontFile, text)) {
+		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
+		return false;
+	}
+	*/
+
+
+
+	// m_Text 객체 생성
+	m_Text = new TextClass;
+	if (!m_Text)
+	{
+		return false;
+	}
+
+	// m_Text 객체 초기화
+	if (!m_Text->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix))
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
@@ -156,6 +202,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd) {
 // 그래픽 클래스 종료
 void GraphicsClass::Shutdown() {
 
+	if (m_Text) {
+		m_Text->Shutdown();
+		delete m_Text;
+		m_Text = 0;
+	}
 
 	if (m_Bitmap) {
 		m_Bitmap->Shutdown();
@@ -208,9 +259,10 @@ void GraphicsClass::Shutdown() {
 
 
 
-// 매 프레임 렌더할 내용
+// 프레임
 bool GraphicsClass::Frame() {
 	static float rotation = 0.0f;
+	//m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
 
 	// 각 프레임의 rotation 변수를 업데이트
 	rotation += (float)XM_PI * 0.005f;
@@ -222,9 +274,59 @@ bool GraphicsClass::Frame() {
 	return Render(rotation);
 }
 
+// 프레임
+// 회전 추가
+bool GraphicsClass::Frame(int x, int y) {
+	static float rotation = 0.0f;
+	//m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+
+	x -= 300;
+	
+	// 각 프레임의 rotation 변수를 업데이트
+	rotation += (float)XM_PI * 0.0001f * x;
+	if (rotation > 360.0f) {
+		rotation -= 360.0f;
+	}
+
+	// 그래픽 랜더링 처리
+	return Render(rotation);
+}
+
+// 프레임
+// 회전 + 타이머
+bool GraphicsClass::Frame(int x, int y, int fps, int cpu, float frameTime) {
+
+	// 초당 프레임 수를 설정
+	if (!m_Text->SetFps(fps, m_Direct3D->GetDeviceContext())) {
+		return false;
+	}
+
+	// cpu 사용을 설정
+	if (!m_Text->SetCpu(cpu, m_Direct3D->GetDeviceContext())) {
+		return false;
+	}
+
+
+	static float rotation = 0.0f;
+	//m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+
+	x -= 300;
+
+	// 각 프레임의 rotation 변수를 업데이트
+	rotation += (float)XM_PI * 0.0001f * x;
+	if (rotation > 360.0f) {
+		rotation -= 360.0f;
+	}
+
+	return Render(rotation);
+}
+
+
+
+
 
 // 렌더링
-bool GraphicsClass::Render(float rotation) {
+bool GraphicsClass::Render(float rotation=0) {
 
 	// 씬을 그리기 위해 버퍼를 초기화
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -277,7 +379,7 @@ bool GraphicsClass::Render(float rotation) {
 	m_Direct3D->TurnZBufferOff();
 
 	// 비트 맵을 그래픽 파이프 라인에 배치하여 렌더링
-	if (!m_Bitmap->Render(m_Direct3D->GetDeviceContext(), 100, 100)) {
+	if (!m_Bitmap->Render(m_Direct3D->GetDeviceContext(), 500, 300)) {
 		return false;
 	}
 
@@ -285,6 +387,20 @@ bool GraphicsClass::Render(float rotation) {
 	if (!m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Bitmap->GetTexture())) {
 		return false;
 	}
+
+
+
+	// Turn on the alpha blending before rendering the text.
+	m_Direct3D->TurnOnAlphaBlending();
+
+	// Render the text strings.
+	if (!m_Text->Render(m_Direct3D->GetDeviceContext(), worldMatrix, orthoMatrix))
+	{
+		return false;
+	}
+
+	// Turn off alpha blending after rendering the text.
+	m_Direct3D->TurnOffAlphaBlending();
 
 	// 모든 2D 렌더링 완료 : Z버퍼 킴
 	m_Direct3D->TurnZBufferOn();

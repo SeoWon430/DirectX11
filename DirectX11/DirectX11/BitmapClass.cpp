@@ -3,6 +3,21 @@
 
 
 BitmapClass::BitmapClass() {
+	m_vertexBuffer = nullptr;
+	m_indexBuffer = nullptr;
+	 m_vertexCount = 0;
+	 m_indexCount = 0;
+
+	m_Texture = nullptr;
+
+	m_screenWidth = 0;
+	m_screenHeight = 0;
+
+	m_bitmapWidth = 0;
+	m_bitmapHeight = 0;
+
+	m_previousPosX = 0;
+	m_previousPosY = 0;
 }
 
 
@@ -16,7 +31,10 @@ BitmapClass::~BitmapClass() {
 
 
 
-bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int screenWidth, int screenHeight, char* textureFilename, int bitmapWidth, int bitmapHeight) {
+
+// 초기화
+bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int screenWidth, int screenHeight
+	, char* textureFilename, int bitmapWidth, int bitmapHeight) {
 
 	// 화면 크기
 	m_screenWidth = screenWidth;
@@ -39,7 +57,6 @@ bool BitmapClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 	// 적용할 텍스쳐 로드
 	return LoadTexture(device, deviceContext, textureFilename);
 }
-
 
 // 2D모델에 적용할 버퍼 생성
 bool BitmapClass::InitializeBuffers(ID3D11Device* device) {
@@ -113,6 +130,32 @@ bool BitmapClass::InitializeBuffers(ID3D11Device* device) {
 	indices = 0;
 
 	return true;
+}
+
+
+
+// 텍스쳐 로드
+bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename) {
+
+	m_Texture = new TextureClass;
+	if (!m_Texture) {
+		return false;
+	}
+
+	return m_Texture->Initialize(device, deviceContext, filename);
+}
+
+
+
+// 텍스트 로드
+bool BitmapClass::LoadText(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, const char* text) {
+
+	m_Texture = new TextureClass;
+	if (!m_Texture) {
+		return false;
+	}
+
+	return m_Texture->Initialize(device, deviceContext, filename);
 }
 
 
@@ -223,7 +266,6 @@ bool BitmapClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, int position
 	return true;
 }
 
-
 // 버퍼를 렌더링
 void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext) {
 
@@ -241,7 +283,7 @@ void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext) {
 
 
 
-// 닫기
+// 해제
 void BitmapClass::Shutdown() {
 
 	ReleaseTexture();
@@ -249,8 +291,6 @@ void BitmapClass::Shutdown() {
 	ShutdownBuffers();
 }
 
-
-// 버퍼 해제
 void BitmapClass::ShutdownBuffers() {
 
 	if (m_indexBuffer) {
@@ -261,6 +301,15 @@ void BitmapClass::ShutdownBuffers() {
 	if (m_vertexBuffer) {
 		m_vertexBuffer->Release();
 		m_vertexBuffer = 0;
+	}
+}
+
+void BitmapClass::ReleaseTexture() {
+
+	if (m_Texture) {
+		m_Texture->Shutdown();
+		delete m_Texture;
+		m_Texture = 0;
 	}
 }
 
@@ -278,24 +327,3 @@ ID3D11ShaderResourceView* BitmapClass::GetTexture() {
 	return m_Texture->GetTexture();
 }
 
-
-
-bool BitmapClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename) {
-
-	m_Texture = new TextureClass;
-	if (!m_Texture) {
-		return false;
-	}
-
-	return m_Texture->Initialize(device, deviceContext, filename);
-}
-
-
-void BitmapClass::ReleaseTexture() {
-	// 텍스처 오브젝트를 릴리즈한다.
-	if (m_Texture) {
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
-	}
-}

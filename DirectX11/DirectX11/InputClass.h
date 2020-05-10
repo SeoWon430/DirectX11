@@ -1,18 +1,36 @@
 #pragma once
 
+#include "stdafx.h"
+
 class InputClass {
+
 public:
 	InputClass();
 	InputClass(const InputClass&);
 	~InputClass();
 
-	void Initialize();
+	bool Initialize(HINSTANCE, HWND, int, int);
+	void Shutdown();
+	bool Frame();
 
-	void KeyDown(unsigned int);
-	void KeyUp(unsigned int);
-
-	bool IsKeyDown(unsigned int);
+	bool IsEscapePressed();
+	void GetMouseLocation(int&, int&);
 
 private:
-	bool m_keys[256];
+	bool ReadKeyboard();
+	bool ReadMouse();
+	void ProcessInput();
+
+private:
+	IDirectInput8* m_directInput;
+	IDirectInputDevice8* m_keyboard;
+	IDirectInputDevice8* m_mouse;
+
+	unsigned char m_keyboardState[256] = { 0, };
+	DIMOUSESTATE m_mouseState;
+
+	int m_screenWidth;
+	int m_screenHeight;
+	int m_mouseX;
+	int m_mouseY;
 };

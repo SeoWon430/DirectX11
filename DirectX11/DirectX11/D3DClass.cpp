@@ -3,6 +3,28 @@
 
 
 D3DClass::D3DClass() {
+
+	m_vsync_enabled = false;
+	m_videoCardMemory = 0;
+
+	m_swapChain = nullptr;
+	m_device = nullptr;
+	m_deviceContext = nullptr;
+
+	m_renderTargetView = nullptr;
+	m_depthStencilBuffer = nullptr;
+	m_depthStencilState = nullptr;
+	m_depthStencilView = nullptr;
+	m_rasterState = nullptr;
+
+	m_projectionMatrix = XMMatrixIdentity();;
+	m_worldMatrix = XMMatrixIdentity();;
+	m_orthoMatrix = XMMatrixIdentity();;
+
+	m_depthDisabledStencilState = nullptr;
+
+	m_alphaEnableBlendingState = nullptr;
+	m_alphaDisableBlendingState = nullptr;
 }
 
 
@@ -330,6 +352,37 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	}
 
 
+
+
+	// Clear the blend state description.
+	D3D11_BLEND_DESC blendStateDescription;
+	ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+
+	// Create an alpha enabled blend state description.
+	blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	// Create the blend state using the description.
+	if (FAILED(m_device->CreateBlendState(&blendStateDescription, &m_alphaEnableBlendingState)))
+	{
+		return false;
+	}
+
+	// Modify the description to create an alpha disabled blend state description.
+	blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+
+	// Create the blend state using the description.
+	if (FAILED(m_device->CreateBlendState(&blendStateDescription, &m_alphaDisableBlendingState)))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -339,6 +392,18 @@ void D3DClass::Shutdown() {
 	// 종료 전 윈도우 모드로 설정하지 않으면 스왑 체인을 해제 할 때 예외가 발생함
 	if (m_swapChain) {
 		m_swapChain->SetFullscreenState(false, NULL);
+	}
+
+	if (m_alphaDisableBlendingState)
+	{
+		m_alphaDisableBlendingState->Release();
+		m_alphaDisableBlendingState = 0;
+	}
+
+	if (m_alphaEnableBlendingState)
+	{
+		m_alphaEnableBlendingState->Release();
+		m_alphaEnableBlendingState = 0;
 	}
 
 	if (m_depthDisabledStencilState) {
@@ -458,4 +523,22 @@ void D3DClass::GetOrthoMatrix(XMMATRIX& orthoMatrix) {
 void D3DClass::GetVideoCardInfo(char* cardName, int& memory) {
 	strcpy_s(cardName, 128, m_videoCardDescription);
 	memory = m_videoCardMemory;
+}
+
+
+void D3DClass::TurnOnAlphaBlending() {
+	// Setup the blend factor.
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	// Turn on the alpha blending.
+	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+}
+
+
+void D3DClass::TurnOffAlphaBlending() {
+	// Setup the blend factor.
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	// Turn off the alpha blending.
+	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 }

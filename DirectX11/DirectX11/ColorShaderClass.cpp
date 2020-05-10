@@ -3,6 +3,10 @@
 
 
 ColorShaderClass::ColorShaderClass() {
+	m_vertexShader = nullptr;
+	m_pixelShader = nullptr;
+	m_layout = nullptr;
+	m_matrixBuffer = nullptr;
 }
 
 
@@ -199,7 +203,7 @@ void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int inde
 
 
 
-// 종료
+// 해제, 종료
 void ColorShaderClass::Shutdown() {
 
 	// 버텍스, 픽셀 쉐이더 관련 객체를 제거

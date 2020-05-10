@@ -1,7 +1,18 @@
 #pragma once
 
+
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#include "stb_truetype.h"
+#include <fstream>
+
+
 #include "stdafx.h"
+
+// .dds파일 로드 헤더
 #include "DDSTextureLoader.h"
+
 
 
 // 텍스쳐(이미지) 정보를 가질 클래스
@@ -32,7 +43,7 @@ private:
 	bool LoadTarga(char*, int&, int&);
 
 private:
-	unsigned char* m_targaData = nullptr;
-	ID3D11Texture2D* m_texture = nullptr;
-	ID3D11ShaderResourceView* m_textureView = nullptr;
+	unsigned char* m_targaData;
+	ID3D11Texture2D* m_texture;
+	ID3D11ShaderResourceView* m_textureView;
 };

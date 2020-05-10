@@ -3,6 +3,13 @@
 
 
 LightClass::LightClass() {
+
+	m_ambientColor = XMFLOAT4();
+	m_diffuseColor = XMFLOAT4();
+	m_direction = XMFLOAT3();
+
+	m_specularPower = 0;
+	m_specularColor = XMFLOAT4();
 }
 
 

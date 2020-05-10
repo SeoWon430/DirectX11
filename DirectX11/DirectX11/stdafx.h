@@ -11,6 +11,7 @@
 #include <windows.h>
 
 // C관련 헤더 파일
+#include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>

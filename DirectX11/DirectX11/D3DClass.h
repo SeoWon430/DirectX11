@@ -28,6 +28,9 @@ public:
 	void TurnZBufferOn();
 	void TurnZBufferOff();
 
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
 private:
 
 	// 수직 동기화
@@ -69,4 +72,8 @@ private:
 
 	// 깊이 스텐실
 	ID3D11DepthStencilState* m_depthDisabledStencilState = nullptr;
+
+	// 알파 블랜딩 상태
+	ID3D11BlendState* m_alphaEnableBlendingState = nullptr;
+	ID3D11BlendState* m_alphaDisableBlendingState = nullptr;
 };

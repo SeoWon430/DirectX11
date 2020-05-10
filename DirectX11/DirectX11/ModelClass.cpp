@@ -3,6 +3,14 @@
 
 
 ModelClass::ModelClass() {
+	m_vertexBuffer = nullptr;
+	m_indexBuffer = nullptr;
+
+	m_vertexCount = 0;
+	m_indexCount = 0;
+
+	m_Texture = nullptr;
+	m_model = nullptr;
 }
 
 
@@ -19,9 +27,8 @@ ModelClass::~ModelClass() {
 
 // 초기화
 // 정점, 색인 버퍼를 초기화
+bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename = NULL, char* textureFilename = NULL) {
 
-bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename = NULL, char* textureFilename = NULL)
-{
 	// 모델 데이터를 로드
 	if (!LoadModel(modelFilename)) {
 		return false;
@@ -39,7 +46,6 @@ bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 // 버퍼 초기화
 bool ModelClass::InitializeBuffers(ID3D11Device* device) {
-
 
 	// 정점 배열 생성
 	VertexType* vertices = new VertexType[m_vertexCount];
@@ -262,7 +268,6 @@ void ModelClass::Render(ID3D11DeviceContext* deviceContext) {
 }
 
 
-// 
 void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext) {
 
 	// 정점 버퍼의 단위와 오프셋을 설정
@@ -298,8 +303,7 @@ ID3D11ShaderResourceView* ModelClass::GetTexture() {
 
 
 
-// 종료
-// 정점, 색인 버퍼를 해제
+// 해제
 void ModelClass::Shutdown() {
 
 	// 모델 텍스쳐를 해제
@@ -314,18 +318,15 @@ void ModelClass::Shutdown() {
 }
 
 
-void ModelClass::ShutdownBuffers()
-{
-	// 인덱스 버퍼를 해제합니다.
-	if (m_indexBuffer)
-	{
+void ModelClass::ShutdownBuffers() {
+
+	if (m_indexBuffer) {
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
 	}
 
-	// 정점 버퍼를 해제합니다.
-	if (m_vertexBuffer)
-	{
+
+	if (m_vertexBuffer) {
 		m_vertexBuffer->Release();
 		m_vertexBuffer = 0;
 	}

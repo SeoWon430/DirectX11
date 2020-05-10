@@ -83,19 +83,19 @@ private:
 	*/
 
 	// 정점 버퍼
-	ID3D11Buffer* m_vertexBuffer = nullptr;
+	ID3D11Buffer* m_vertexBuffer;
 
 	// 색인 버퍼
-	ID3D11Buffer* m_indexBuffer = nullptr;
+	ID3D11Buffer* m_indexBuffer;
 
 	// 정점 갯수
-	int m_vertexCount = 0;
+	int m_vertexCount;
 
 	// 색인 갯수
-	int m_indexCount = 0;
+	int m_indexCount;
 
 
-	TextureClass* m_Texture = nullptr;
+	TextureClass* m_Texture;
 
-	ModelType* m_model = nullptr;
+	ModelType* m_model;
 };

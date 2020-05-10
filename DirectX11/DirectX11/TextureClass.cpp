@@ -4,6 +4,9 @@
 
 
 TextureClass::TextureClass() {
+	m_targaData = nullptr;
+	m_texture = nullptr;
+	m_textureView = nullptr;
 }
 
 
@@ -18,21 +21,19 @@ TextureClass::~TextureClass() {
 
 
 
-// 텍스쳐 초기화(dds불러오기)
+// 초기화(dds)
 bool TextureClass::Initialize(ID3D11Device* device, WCHAR* filename) {
 
-	
-	// 텍스처를 파일로부터 읽어옴
-	/*
-	if (FAILED(CreateDDSTextureFromFile(device, filename, nullptr, &m_texture)))
-	{
+	// .dds 파일 읽기
+	if (FAILED(CreateDDSTextureFromFile(device, filename, nullptr, &m_textureView))) {
 		return false;
 	}
-	*/
+
 	return true;
 }
 
-// 텍스쳐 초기화(targa불러오기)
+
+// 초기화(targa)
 bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename) {
 
 	int width = 0;
@@ -45,7 +46,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		return false;
 	}
 
-	//텍스처의 구조체를 설정합니다.
+	//텍스처의 구조체를 설정
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Height = height;
 	textureDesc.Width = width;
@@ -111,49 +112,50 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width) {
 		return false;
 	}
 
-	// 파일헤더에서 중요 정보를 얻어옵니다.
+	// 파일헤더에서 중요 정보를 설정
 	height = (int)targaFileHeader.height;
 	width = (int)targaFileHeader.width;
 	int bpp = (int)targaFileHeader.bpp;
 
-	// 파일이 32bit 인지 24bit인지 체크합니다.
+	// 파일이 32bit 인지 24bit인지 체크
 	if (bpp != 32) {
 		return false;
 	}
 
-	// 32 비트 이미지 데이터의 크기를 계산합니다.
+	// 32 비트 이미지 데이터의 크기를 계산
 	int imageSize = width * height * 4;
 
-	//  targa 이미지 데이터 용 메모리를 할당합니다.
+	//  targa 이미지 데이터 용 메모리를 할당
 	unsigned char* targaImage = new unsigned char[imageSize];
 	if (!targaImage) {
 		return false;
 	}
 
-	// targa 이미지 데이터를 읽습니다.
+	// targa 이미지 데이터를 읽음
 	count = (unsigned int)fread(targaImage, 1, imageSize, filePtr);
 	if (count != imageSize) {
 		return false;
 	}
 
-	// 파일을 닫습니다.
+	// 파일 닫기
 	if (fclose(filePtr) != 0) {
 		return false;
 	}
 
-	// targa 대상 데이터에 대한 메모리를 할당합니다.
+	// targa 대상 데이터에 대한 메모리를 할당
 	m_targaData = new unsigned char[imageSize];
 	if (!m_targaData) {
 		return false;
 	}
 
-	// targa 대상 데이터 배열에 인덱스를 초기화합니다.
+	// targa 대상 데이터 배열에 인덱스를 초기화
 	int index = 0;
 
-	// targa 이미지 데이터에 인덱스를 초기화합니다.
+	// targa 이미지 데이터에 인덱스를 초기화
 	int k = (width * height * 4) - (width * 4);
 
-	// 이제 targa 형식이 거꾸로 저장되었으므로 올바른 순서로 targa 이미지 데이터를 targa 대상 배열에 복사합니다.
+
+	// targaImage[]에 저장된 형식은 역순으로 이를 재설정하여 m_targaData[] 에 저장
 	for (int j = 0; j < height; j++) {
 		for (int i = 0; i < width; i++) {
 			m_targaData[index + 0] = targaImage[k + 2];  // 빨강
@@ -161,16 +163,14 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width) {
 			m_targaData[index + 2] = targaImage[k + 0];  // 파랑
 			m_targaData[index + 3] = targaImage[k + 3];  // 알파
 
-														 // 인덱스를 targa 데이터로 증가시킵니다.
 			k += 4;
 			index += 4;
 		}
 
-		// targa 이미지 데이터 인덱스를 역순으로 읽은 후 열의 시작 부분에서 이전 행으로 다시 설정합니다.
 		k -= (width * 8);
 	}
 
-	// 대상 배열에 복사 된 targa 이미지 데이터를 해제합니다.
+	// 대상 배열에 복사 된 targa 이미지 데이터를 해제
 	delete[] targaImage;
 	targaImage = 0;
 
@@ -179,6 +179,9 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width) {
 
 
 
+
+
+// 해제
 void TextureClass::Shutdown() {
 
 	if (m_textureView) {
@@ -199,6 +202,8 @@ void TextureClass::Shutdown() {
 
 
 
+
+// 현재 클래스가 가진 텍스쳐 리턴
 ID3D11ShaderResourceView* TextureClass::GetTexture() {
 	return m_textureView;
 }

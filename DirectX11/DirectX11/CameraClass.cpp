@@ -2,10 +2,10 @@
 #include "CameraClass.h"
 
 
-// 카메라의 초기값(위치, 회전) 설정
 CameraClass::CameraClass() {
-	m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);;
-	m_rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_position = XMFLOAT3();
+	m_rotation = XMFLOAT3();
+	m_viewMatrix = XMMatrixIdentity();
 }
 
 

@@ -4,6 +4,10 @@
 #include "InputClass.h"
 #include "GraphicsClass.h"
 #include "SystemClass.h"
+#include "SoundClass.h"
+#include "FpsClass.h"
+#include "TimerClass.h"
+#include "CpuClass.h"
 
 
 
@@ -32,8 +36,13 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
-	InputClass* m_Input = nullptr;
-	GraphicsClass* m_Graphics = nullptr;
+	InputClass* m_Input;
+	GraphicsClass* m_Graphics;
+	SoundClass* m_Sound;
+
+	FpsClass* m_Fps;
+	CpuClass* m_Cpu;
+	TimerClass* m_Timer;
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

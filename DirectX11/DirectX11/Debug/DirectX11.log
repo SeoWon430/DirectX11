@@ -1,2 +1,20 @@
-﻿  TextureClass.cpp
+﻿  BitmapClass.cpp
+  CameraClass.cpp
+  ColorShaderClass.cpp
+  CpuClass.cpp
+  D3DClass.cpp
+  FontClass.cpp
+  FontShaderClass.cpp
+  FpsClass.cpp
+  GraphicsClass.cpp
+C:\Users\SeoWon\Documents\GitHub\DirectX11\DirectX11\DirectX11\GraphicsClass.cpp(38,27): warning C4316: 'D3DClass': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+C:\Users\SeoWon\Documents\GitHub\DirectX11\DirectX11\DirectX11\GraphicsClass.cpp(52,28): warning C4316: 'CameraClass': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+C:\Users\SeoWon\Documents\GitHub\DirectX11\DirectX11\DirectX11\GraphicsClass.cpp(185,24): warning C4316: 'TextClass': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+  InputClass.cpp
+C:\Users\SeoWon\Documents\GitHub\DirectX11\DirectX11\DirectX11\InputClass.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  LightClass.cpp
+  SystemClass.cpp
+  TextClass.cpp
+  main.cpp
+  코드를 생성하고 있습니다...
   DirectX11.vcxproj -> C:\Users\SeoWon\Documents\GitHub\DirectX11\DirectX11\Debug\DirectX11.exe

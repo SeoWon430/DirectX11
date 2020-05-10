@@ -26,6 +26,8 @@ public:
 	int GetIndexCount();
 	ID3D11ShaderResourceView* GetTexture();
 
+
+
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
@@ -33,27 +35,28 @@ private:
 	void RenderBuffers(ID3D11DeviceContext*);
 
 	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+	bool LoadText(ID3D11Device*, ID3D11DeviceContext*, char*, const char*);
 	void ReleaseTexture();
 
 private:
 	// 2D모델 (삼각형을 통해 2D도형 구성)
-	ID3D11Buffer* m_vertexBuffer = nullptr;
-	ID3D11Buffer* m_indexBuffer = nullptr;
-	int m_vertexCount = 0;
-	int m_indexCount = 0;
+	ID3D11Buffer* m_vertexBuffer;
+	ID3D11Buffer* m_indexBuffer;
+	int m_vertexCount;
+	int m_indexCount;
 
 	// 렌더링 할 이미지(텍스쳐)
-	TextureClass* m_Texture = nullptr;
+	TextureClass* m_Texture;
 
 	// 화면 크기
-	int m_screenWidth = 0;
-	int m_screenHeight = 0;
+	int m_screenWidth;
+	int m_screenHeight;
 
 	// 비트맵 크기
-	int m_bitmapWidth = 0;
-	int m_bitmapHeight = 0;
+	int m_bitmapWidth;
+	int m_bitmapHeight;
 
 	// 이전 프레임 위치
-	int m_previousPosX = 0;
-	int m_previousPosY = 0;
+	int m_previousPosX;
+	int m_previousPosY;
 };

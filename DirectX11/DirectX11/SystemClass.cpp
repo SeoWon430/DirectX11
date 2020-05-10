@@ -3,6 +3,17 @@
 
 
 SystemClass::SystemClass() {
+	m_applicationName = nullptr;
+	m_hinstance = nullptr;
+	m_hwnd = nullptr;
+
+	m_Input = nullptr;
+	m_Graphics = nullptr;
+	m_Sound = nullptr;
+
+	m_Fps = nullptr;
+	m_Cpu = nullptr;
+	m_Timer = nullptr;
 }
 
 
@@ -36,7 +47,11 @@ bool SystemClass::Initialize() {
 		return false;
 	}
 	// m_Input 객체 초기화
-	m_Input->Initialize();
+	if (!m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight))
+	{
+		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
 
 
 	// m_Graphics 객체 생성
@@ -46,8 +61,67 @@ bool SystemClass::Initialize() {
 	{
 		return false;
 	}
+
 	// m_Graphics 객체 초기화.
-	return m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	if (!m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd))
+	{
+		return false;
+	}
+
+
+
+	// Create the sound object.
+	m_Sound = new SoundClass;
+	if (!m_Sound)
+	{
+		return false;
+	}
+
+	// Initialize the sound object.
+	if (!m_Sound->Initialize(m_hwnd))
+	{
+		MessageBox(m_hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
+		return false;
+	}
+
+
+
+	// fps 객체를 만듭니다.
+	m_Fps = new FpsClass;
+	if (!m_Fps)
+	{
+		return false;
+	}
+
+	// fps 객체를 초기화합니다.
+	m_Fps->Initialize();
+
+	// cpu 객체를 만듭니다.
+	m_Cpu = new CpuClass;
+	if (!m_Cpu)
+	{
+		return false;
+	}
+
+	// cpu 객체를 초기화합니다.
+	m_Cpu->Initialize();
+
+	// 타이머 객체를 만듭니다.
+	m_Timer = new TimerClass;
+	if (!m_Timer)
+	{
+		return false;
+	}
+
+	// 타이머 객체를 초기화합니다.
+	if (!m_Timer->Initialize())
+	{
+		MessageBox(m_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		return false;
+	}
+
+
+	return true;
 }
 
 
@@ -58,6 +132,36 @@ bool SystemClass::Initialize() {
 // 생성한 객체 반대 순서로 해제
 // 마지막으로 왼도우를 닫음
 void SystemClass::Shutdown() {
+
+
+	// 타이머 객체를 해제합니다.
+	if (m_Timer)
+	{
+		delete m_Timer;
+		m_Timer = 0;
+	}
+
+	// cpu 객체를 해제합니다.
+	if (m_Cpu)
+	{
+		m_Cpu->Shutdown();
+		delete m_Cpu;
+		m_Cpu = 0;
+	}
+
+	// fps 객체를 해제합니다.
+	if (m_Fps)
+	{
+		delete m_Fps;
+		m_Fps = 0;
+	}
+
+	if (m_Sound)
+	{
+		m_Sound->Shutdown();
+		delete m_Sound;
+		m_Sound = 0;
+	}
 
 	if (m_Graphics) {
 		m_Graphics->Shutdown();
@@ -98,8 +202,19 @@ void SystemClass::Run() {
 		else {
 			// 그 외에는 Frame 함수를 처리
 			if (!Frame())
+			{
+				MessageBox(m_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
 				break;
+			}
 		}
+
+
+		// 사용자가 ESC키를 눌렀는지 확인 후 종료 처리함
+		if (m_Input->IsEscapePressed() == true)
+		{
+			break;
+		}
+
 	}
 }
 
@@ -108,14 +223,48 @@ void SystemClass::Run() {
 // 매 프레임 실행 할 기능
 bool SystemClass::Frame() {
 
+	int mouseX = 0 , mouseY = 0;
+
+	if (!m_Input->Frame())
+	{
+		return false;
+	}
+
+	m_Input->GetMouseLocation(mouseX, mouseY);
+	
+	/*
+	if (!m_Graphics->Frame(mouseX, mouseY)) {
+		return false;
+	}
+	*/
+	/*
 	// ESC 키 감지
 	// 감지하면 종료
 	if (m_Input->IsKeyDown(VK_ESCAPE)) {
 		return false;
 	}
-
+	*/
 	// 그래픽 객체의 Frame을 실행
-	return m_Graphics->Frame();
+
+
+
+	m_Timer->Frame();
+	m_Fps->Frame();
+	m_Cpu->Frame();
+
+	// 입력 프레임 처리를 수행합니다
+	if (!m_Input->Frame())
+	{
+		return false;
+	}
+
+	// 그래픽 객체에 대한 프레임 처리를 수행합니다.
+	if (!m_Graphics->Frame(mouseX, mouseY, m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime()))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -255,13 +404,17 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 
 		// 키보드가 눌러졌는가 처리
 	case WM_KEYDOWN: {
+		PostQuitMessage(0);
 		// 키 눌림 flag를 m_Input 객체에 처리
-		m_Input->KeyDown((unsigned int)wparam);
+		//m_Input->KeyDown((unsigned int)wparam);
 		return 0;
 	}
 
 				   // 키보드가 떨어졌는가 처리
 	case WM_KEYUP: {
+
+		PostQuitMessage(0);
+
 		// 키 해제 flag를 m_Input 객체에 처리
 		return 0;
 	}

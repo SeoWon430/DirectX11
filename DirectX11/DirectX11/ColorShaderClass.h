@@ -34,14 +34,14 @@ private:
 
 private:
 	// 버텍스 셰이더
-	ID3D11VertexShader* m_vertexShader = nullptr;
+	ID3D11VertexShader* m_vertexShader;
 
 	// 픽셀 셰이더
-	ID3D11PixelShader* m_pixelShader = nullptr;
+	ID3D11PixelShader* m_pixelShader;
 
 	// 인풋 레이아웃
-	ID3D11InputLayout* m_layout = nullptr;
+	ID3D11InputLayout* m_layout;
 
 	// 행렬 버퍼
-	ID3D11Buffer* m_matrixBuffer = nullptr;
+	ID3D11Buffer* m_matrixBuffer;
 };
